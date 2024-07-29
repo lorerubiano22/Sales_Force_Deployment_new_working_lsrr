@@ -1,0 +1,370 @@
+\newenvironment{defsymbols}[1]
+  {\begin{list}{}{\settowidth{\labelwidth}{#1}
+  \setlength{\leftmargin}{\labelwidth}
+  \addtolength{\leftmargin}{\labelsep}
+  \parsep 0.5ex plus 0.2ex minus 0.2ex \itemsep 0.3ex % to customize
+  \renewcommand{\makelabel}[1]{ ##1 \hfill}}}{\end{list}\vspace*{0.25cm}}
+
+\newcounter{stepnr}
+\setcounter{stepnr}{1}
+\def\step{{\em step} & {\em\thestepnr:} \stepcounter{stepnr}}
+
+
+
+
+\documentclass[xcolor=dvipsnames,aspectratio=169,handout]{beamer}
+% \usepackage{amsmath,amsfonts,amssymb}
+% %\pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm,landscape]
+% %\usepackage{ulem}
+% \usepackage{pgfpages}
+% \usepackage{transparent}
+% \usepackage{booktabs}
+\usepackage{mathtools}
+\usepackage[mode=buildnew]{standalone}
+% \usepackage{subfigure}
+% %\usepackage{subfig}
+% \usepackage{tikz}
+% \usetikzlibrary{shapes}
+% \usetikzlibrary{arrows,backgrounds,shapes, calc,decorations.pathmorphing,patterns,plotmarks}
+
+
+\newcommand{\prof}{Sven Müller, RWTH Aachen University}
+\newcommand{\course}{Optimize Sales by Artificial Intelligence}
+
+\input{presentationOVGU.tex}
+
+
+\begin{document}
+
+\title[DCA]{{\sffamily \textbf{\LARGE \course \\  [1.5ex] }}}
+\author[Müller]{\textbf{{\sffamily \prof }}}
+
+
+\titlegraphic{
+%	\includegraphics[width=0.2\textwidth]{../../logo/logo_ba}
+}
+
+\begin{frame}[plain]
+%\begin{backgroundblock}{100mm}{0mm}
+%{\transparent{0.2}\includegraphics[width=0.5\text%width]{ovgu_logo_75}}
+%\end{backgroundblock}
+\titlepage
+\end{frame}
+
+\begin{frame}{\textbf{Subproblems in Sales Force Deployment}}
+%\textbf{Subproblems}
+%\begin{itemize}[<+->]
+	%\item Sizing of the sales force
+	%\item Sales persons locations
+	%\item Sales territory alignment
+	%\item Sales resource allocation
+%\end{itemize}
+\begin{figure}
+ \begin{minipage}[b]{0.45\linewidth} \centering
+  \input{SFDsize2.tex}\\
+	Sales force size 
+ \end{minipage}
+\uncover<2->{
+ \begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDlocate2.tex}\\
+	Salespersons' location
+	\end{minipage}
+	}
+	\vspace{0.5cm}
+	\uncover<3->{
+	\begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDalign2.tex}\\
+	Sales territory alignment
+	\end{minipage}
+	}
+	\uncover<4->{
+	\begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDallocate2.tex}\\
+	Resource allocation
+	\end{minipage}
+	}
+\end{figure}
+\end{frame}
+
+
+
+\section{Terminology \& Problem}
+
+\begin{frame}{\textbf{Sales coverage unit (SCU)}}
+containing customers (accounts) and/or salespersons \\
+\centering
+\includestandalone[width=0.8\linewidth]{sales_area_plain.tex}
+\end{frame}
+
+\begin{frame}{\textbf{Terminology}}
+	\begin{itemize}[<+->]
+	\item \textbf{Selling time}: optimally allocated to customers within an SCU
+	\begin{itemize}
+	  \item[$=$] sum of 
+		\item Travel time: approximated by (function of) distance between SCUs
+	  \item Calling time: 
+		\begin{itemize}
+			\item time at customer (product presentation, f.e.) 
+			\item depends on travel time
+		\end{itemize}
+	\end{itemize}	
+	\item \textbf{Sales}: function of selling time
+	\item \textbf{Cost}:
+	\begin{itemize}
+	\item Fixed locational cost: fixed part of salary, rent
+	\item Travel cost: function of distance
+	\end{itemize}
+	\item \textbf{Profit contribution}: function of sales and travel cost
+	\item \textbf{Total profit} (Objective): function of profit contribution and fixed cost
+\end{itemize}
+\end{frame}
+
+
+%\section{Profit Contribution}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Profit Contribution}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Selling time}}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\centering
+\includestandalone[width=0.99\linewidth]{sales_area_plain.tex}
+\column{0.5\textwidth}
+\begin{description}
+  \item[$i$] SCU of salesperson
+  \item[$j$] SCU containing customers
+  \item[$t$] selling time
+  \item[$\beta_{ij}$] travel time from $i$ to $j$ \textbf{as fraction of selling time}
+\end{description}
+\textbf{Calling time} of salesperson from $i$ at customers in SCU $j$ \[(1-\beta_{ij})\cdot t\]
+$0<\beta_{ij}<1$
+\end{columns}
+\end{frame}
+
+\begin{frame}{\textbf{Calling time: elasticity and profitability}}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\centering
+\includestandalone[width=0.99\linewidth]{sales_area_plain.tex}
+\column{0.5\textwidth}
+\begin{description}
+  \item[$b$] calling time elasticity, $0<b<1$
+  \item[$n_j$] calling time profitability
+  \item[$\mu$] scaling parameter, $\mu>0$
+\end{description}\\
+\textbf{Sales response function}\\
+number of products sold by salesperson from $i$ investing selling time $t$ at customers in SCU $j$ 
+\[s_{ij}(t) = \mu \cdot n_j \cdot (\ (1-\beta_{ij})\cdot t \ ) ^b\]
+\end{columns}
+\end{frame}
+
+\begin{frame}{Challenge }
+\begin{alertblock}{$b$ and  $\mu$ are \textbf{unknown}}
+\begin{description}
+  \item[$b$] calling time elasticity: determines effective calling time
+  \item[$\mu$] scaling parameter: converts effective calling time into sales
+\end{description}
+\end{alertblock}
+\centering
+\textbf{Solution}:\\ \vfill 
+\begin{columns}[c]
+\column{.6\textwidth}\centering
+\textbf{your data}
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+id & salesp. & SCU & account & SCU & $t$ & sales \\ \midrule
+1  & Walter  & 5   & S\&R    & 10  & 7   & 100   \\
+2  & Walter  & 5   & S\&R    & 10  & 2   & 25    \\
+3  & Walter  & 5   & DLC     & 5   & 1   & 10    \\
+4  & Karen   & 2   & MAN     & 99  & 10  & 50    \\ \bottomrule
+\end{tabular}
+\column{0.4\textwidth}
+\textbf{our machine learning tools} $\Rightarrow \mu, b$
+\end{columns}
+\end{frame}
+
+\begin{frame}{Profit contribution}
+\begin{description}
+  \item[$s_{ij}(t)$] sales response function: (expected) sales by salesperson from $i$ investing selling time $t$ at customers in SCU $j$ 
+  \item[$h$] cost per travel (time) unit
+  \item[$\alpha$] per unit profit contribution of sales, i.e.: selling price - per unit (production) cost
+\end{description}
+\vfill
+\begin{block}{Profit contribution function}
+\begin{equation}
+    p_{ij}(t) = \alpha \cdot \mu \cdot n_j \cdot (\ (1 - \beta_{ij})\cdot t)^b - h \cdot \beta_{ij} \cdot t.
+\end{equation}
+\end{block}
+\end{frame}
+
+\begin{frame}{Simplify!}
+\begin{columns}
+\column{0.5\linewidth}
+\centering
+\begin{align*}
+\Aboxed{p_{ij}(t) &= c_{ij} \cdot t^b - o_{ij} \cdot t}\\
+c_{ij} &=  \alpha \cdot \mu \cdot n_j \, (1- \beta_{ij})^b\\
+o_{ij} &=  h \cdot \beta_{ij}
+\end{align*}
+\vfill
+\textbf{We decide on} $t$!
+\column{0.5\linewidth}
+\begin{figure}[h!]
+	\centering
+%		\includegraphics[width=1.00\textwidth]{ProfitContri_Elast.pdf}
+\scalebox{1.5}{
+\input{TEX_ProfitContri_Elast.tex}
+}
+	\label{fig:ProfitContri_Elast}
+\end{figure}
+%$c_{ij}=1$ and $o_{ij}=0$
+\end{columns}
+\end{frame}
+
+\begin{frame}{\textbf{Sales Force Deployment Problem}}
+\begin{block}{\textbf{Problem Statement}}
+Determine the appropriate \textbf{sales force size} and corresponding \textbf{locations}, construct a
+contiguous \textbf{sales territory} for each salesteam, and allocate the total available
+\textbf{selling time} of each salesteam over its sales territory so that the sum of \textbf{profit}
+contributions obtained by the salespersons less the fixed location costs is \textbf{maximized}.
+\end{block}
+\begin{figure}
+\centering
+ \begin{minipage}[b]{0.2\linewidth} \centering
+  \input{SFDsize2.tex}
+	\footnotesize Sales force size 
+ \end{minipage}
+ \begin{minipage}[b]{0.2\linewidth} \centering
+	\input{SFDlocate2.tex}
+	\footnotesize Salespersons' location
+	\end{minipage}
+	\begin{minipage}[b]{0.25\linewidth} \centering
+	\input{SFDalign2.tex}\\
+	\footnotesize Sales territory alignment
+	\end{minipage}
+	\begin{minipage}[b]{0.2\linewidth} \centering
+	\input{SFDallocate2.tex}
+	\footnotesize Resource allocation
+	\end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Objective: Profit maximization}
+\begin{equation}
+ \text{Maximize } \ F =  \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T \cdot M]} p_{ij}(t)  x_{ijt} - \sum_{i \in I} \sum_{m=1}^M f_{im} y_{im}  \label{sfd-mod-of}
+\end{equation}
+with\\
+\begin{description}
+	\item[$J_i$]     set of SCUs assignable to a salesteam located in SCU $i$ ($J_i \subseteq J$)
+  \item[$T$]       total available selling time of a salesperson per period
+    \item[$M$] maximum allowed sales team size with $m = 1,\dots,M$
+  \item[$f_{im}$]   fixed cost per period for locating $m$ salespersons in SCU $i$
+\end{description}
+\uncover<2->{
+\textbf{Decision variables}
+\begin{description}
+	  \item[$y_{im}$]  =1, if a location is set up in SCU $i$ for a salesteam of size $m$  ($y_{im} = 0$, otherwise)
+  \item[$x_{ijt}$]  =1, if salesteam located in SCU $i$ is allocating a selling time of $t$ to SCU $j$     ($x_{ijt} = 0$, otherwise)
+\end{description}
+}
+\end{frame}
+
+\begin{frame}{\textbf{Artificial Sales Area - Visualization}}
+\begin{center}
+    \includestandalone[width=0.75\linewidth]{sales_area.tex}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Artificial Sales Area - Results}}
+\begin{minipage}{0.48\linewidth}
+\begin{center}
+    $M = 1$\\[0.5em]
+    \includestandalone[width=\linewidth]{solu_mip_m1} \\[-0.5cm]
+    \begin{align*}
+    \underline{F}&=675,897.73 \\
+    \text{Sales} &= 1,272,122.23 \\
+    \text{Fixed Cost} &= 553,000 \\
+    \text{Travel Cost} &= 43,224.50
+    \end{align*}
+    
+\end{center}
+\end{minipage}
+\begin{minipage}{0.48\linewidth}
+\begin{center}
+    $M=5$ \\[0.5em]
+    \includestandalone[width=\linewidth]{solu_mip_m5} \\[-0.5cm]
+    \begin{align*}
+    \underline{F}&=716,490.24 \\
+    \text{Sales} &= 1,461,123.84 \\
+    \text{Fixed Cost} &= 665,530 \\
+    \text{Travel Cost} &= 79,103.60
+    \end{align*}
+\end{center}
+\end{minipage}
+\end{frame}
+
+
+\begin{frame}{\textbf{Computational Study}}
+\begin{center}
+    \small
+    \begin{tabular}{cccrrrrr}
+    \toprule
+        $|J|$ & $|I|$ & $M$ & $\overline{F}_0/100$ & $\underline{F}/100$ & $\epsilon$\footnote{$\epsilon=\left(\frac{\overline{F}_0-\underline{F}}{\overline{F}_0} \right) \cdot 100$} &  $\text{CPU-Time}$ (sec.)  \\ \midrule
+        36 & 12 & 5 & 7,407.05 & 7,164.90 & 3.27 \%  & 28.36 \\
+        36 & 12 & 1 & 6,764.11 & 6,758.97 & 0.08 \%   & 10.32  \\ \midrule
+        64 & 20 & 5 & 13,883.32 & 13,417.37 & 3.36 \%  & 220.14  \\
+        64 & 20 & 1 & 12,620.52 & 12,615.57 & 0.04 \% & 33.73 \\ \midrule
+        100 & 30 & 5 & 21,915.31 & 21,353.11 & 2.57 \%  & 3157.98 \\
+        100 & 30 & 1 & 19,312.03 & 19,292.88 & 0.10 \%  & 6303.85 \\ \midrule 
+        225 & 50 & 5 & 45,258.40 & 44,002.20 & 2.78 \%  & 7200.00  \\
+        225 & 50 & 1 & 40,059.29 & 40,016.51 & 0.11 \%  & 1109.85  \\ \bottomrule
+    \end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{\textbf{Case study: Pharmaceutical industry}}
+\centering \includegraphics[width=.75\textwidth]{map1.png}
+\end{frame}
+
+\begin{frame}{\textbf{Case study: Pharmaceutical industry}}
+\centering \includegraphics[width=.75\textwidth]{map2.png}
+\end{frame}
+
+\begin{frame}{\textbf{Case study: Pharmaceutical industry}}
+\centering \includegraphics[width=.75\textwidth]{map3.png}
+\end{frame}
+
+\begin{frame}
+  \centering
+ \Large  \textbf{One more thing!}
+\end{frame}
+
+\begin{frame}{\textbf{Profit vs. Fairness}}
+\centering\includegraphics[width=0.95\textwidth]{singleVsmulti.png}
+\end{frame}
+
+
+\begin{frame}{\textbf{Profit vs. Fairness}}
+\centering\includegraphics[width=0.8\textwidth]{fairness_1.png}
+\end{frame}
+
+\begin{frame}{\textbf{Profit vs. Fairness}}
+\centering\includegraphics[width=0.85\textwidth]{fairness_2.png}
+\end{frame}
+
+\begin{frame}{\textbf{Profit vs. Fairness}}
+\centering\includegraphics[width=0.45\textwidth]{obj.png}
+\includegraphics[width=0.45\textwidth]{fair.png}
+\end{frame}
+
+\begin{frame}
+  \centering
+ \Large  \textbf{Be fair and profitable}
+\end{frame}
+
+\end{document}
+

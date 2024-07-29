@@ -1,0 +1,39 @@
+\documentclass[xcolor=dvipsnames,aspectratio=169]{beamer}
+\usepackage{tikz}
+\input{presentationOVGU}
+\usetikzlibrary{fadings,shapes.arrows,shadows,decorations,backgrounds,shapes,calc}
+\begin{document}
+
+
+\begin{frame}[squeeze]{CG-approach}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=white]	\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process1} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{process} = [rectangle,rounded corners, minimum width=3cm, minimum height=1cm, text centered, text width=5cm, draw=black, fill=white]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=white]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,thick,scale=0.6, every node/.style={scale=0.6}]
+\node (start) [startstop] {Initial solution: one duty per task};
+\node (pro1) [process, below of=in1, yshift=0.1cm] {Minimization problem LP-relaxation of Set partitioning problem};
+\node (pro2) [process, below of=pro1, yshift=0.1cm] {Simplex method $\Rightarrow$ dual variable $\pi_i$. $\hat{t}_{ij}$= $t_{ij}-\pi_i$};
+\node (pro3) [process, below of=pro2, yshift=0.1cm] {Shortest path problem with path constraints};
+\node (pro4) [process, below of=pro3, yshift=0.1cm] {Walking route with minimal reduced cost
+};
+\node (dec1) [decision, below of=pro4, yshift=0.1cm] {$\bar{c}^* <0$};
+\node (pro5) [process, below of=dec1, yshift=0.1cm] {Integer solution by rounding up with column generation after each rounding };
+\node (pro6) [process, right of=dec1, xshift=6cm] {Walking route with negative reduced cost (new variable, i.e., column)};
+\draw [arrow] (dec1) -- node[anchor=east] {no} (pro5);
+\draw [arrow] (dec1) -- node[anchor=south] {yes} (pro6);
+\draw [arrow] (pro6) |- (pro1);
+\draw [arrow] (start) -- (pro1);
+\draw [arrow] (pro1) -- (pro2);
+\draw [arrow] (pro2) -- (pro3);
+\draw [arrow] (pro3) -- (pro4);
+\draw [arrow] (pro4) -- (dec1);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+
+\end{document}

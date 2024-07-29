@@ -1,0 +1,375 @@
+%\documentclass[12pt, a4paper, twoside, titlepage]{article}
+\documentclass[12pt]{scrartcl}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{natbib}
+\bibliographystyle{agsm} 
+\usepackage{amsmath,amssymb,amstext}
+\usepackage{amsfonts}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{courier}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{siunitx}
+\hypersetup{
+	colorlinks = true,
+	citecolor = blue
+}
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{color, colortbl}
+\usepackage{framed}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{threeparttable}
+\usepackage{rotating}
+\usepackage[mode=buildnew]{standalone}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{adjustbox}
+\usepackage{textcomp,gensymb} 
+\usepackage{float}
+\def\set#1{\mathcal{#1}}
+\def\sJ{\set{J}}
+\def\sH{\set{H}}
+\def\sI{\set{I}}
+\def\sN{\set{N}}
+\def\sR{\set{M}}
+\def\sM{\set{M}}
+\def\sP{\set{P}}
+\def\sR{\set{R}}
+\def\sS{\set{S}}
+\def\sD{\set{D}}
+\def\sE{\set{E}}
+
+\makeatletter
+\def\and{%
+  \end{tabular}%
+  \begin{tabular}[t]{c}}%
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or a\or b\or c\or
+   d\or e\or f\or g\or h\or i\else\@ctrerr\fi}}
+\makeatother
+
+\newcommand{\q}[1]{``#1''}
+\allowdisplaybreaks
+
+\makeatletter
+\newenvironment{rotatepage}
+        {%
+            \if@twoside%
+                \ifthispageodd{\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}{%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 270}}%
+            \else%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}%
+            \fi%
+        }%
+        {\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+
+\makeatother
+
+\def\bf{}
+\newenvironment{defsymbols}[1]
+{\vspace{-0.25ex}
+	\begin{list}{}{\settowidth{\labelwidth}{#1}
+			\setlength{\leftmargin}{\labelwidth}
+			\addtolength{\leftmargin}{\labelsep}
+			\parsep 0.5ex plus 0.2ex minus 0.2ex \itemsep 0.3ex % to customize
+			\renewcommand{\makelabel}[1]{ ##1 \hfill}}}{\end{list}}
+
+\def\st{& \text{subject to} &  \nonumber \\}
+\def\hs{\hspace*{-1cm}}
+\def\teps{\tilde{\epsilon}}
+\def\tmep{e^{-\tilde{\epsilon}}}
+
+\title{Modular Capacitated Sales Force Deployment}
+% \author{Sven M\"uller\footnote{Institute for Operations Management, Otto von Guericke University, Magdeburg, Germany, \texttt{sven.mueller@ovgu.de}} \footnote{corresponding author}\ , Lucas Weber\footnote{Institute for Operations Management, Otto von Guericke University, Magdeburg, Germany, \texttt{lucas.weber@ovgu.de}} \ and Knut Haase\footnote{Institute for Transport Economics, Hamburg University, Hamburg, Germany, \texttt{knut.haase@uni-hamburg.de}}  }
+
+\author{xxxx,\thanks{DBA,  University, Aachen, Germany, \texttt{\{sven.mueller, reyes\}@rwth.de}} \thanks{corresponding author} \and
+        Sven M\"uller\footnotemark[1] }
+
+\date{\today} 
+%\linespread{1.5}
+\pgfplotsset{compat=1.17}
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+...
+
+\end{abstract}
+
+\section{Introduction} \label{Introduction}
+
+...
+
+\section{Problem Description} \label{Problem Description}
+
+In this section we will briefly discuss the sub-problems in sales force deployment and introduce some necessary terminology. \\
+
+\textbf{Sales territory alignment.} Consider a selling company that operates within a large geographical area. This \emph{sales area} consists of so called \emph{sales coverage units} (SCUs). Each SCU is a smaller geographical region (e.g. zip code) within the sales area and contains (potential) customers. The sub-problem of sales territory alignment aims to construct contiguous \emph{sales territories} that consist of at least one SCU.
+
+\textbf{Locating sales representatives.} The location sub-problem decides in which SCUs a location will be established. Sales territories are constructed around those locations and each location is responsible for the accounts within their sales territory. Setting up a location causes \emph{fixed costs} (e.g. rent for the office rooms).
+
+\textbf{Sizing of the salesforce.} This sub-problem decides on both how many locations should be set up and how many sales representatives should be employed at each location. The sizing decision also causes fixed costs (e.g. fixed part of salary, increasing rent for larger office rooms). This is an extension to the model from \cite{Haase2014}, where each potential location may only employ one sales representative.
+
+\textbf{Resource allocation} determines how sales representatives should allocate their time to the SCUs within their sales territory. The total \emph{selling time} is the sum of \emph{travel time} and \emph{calling time}. Calling time is spent directly at the customer (e.g. for product presentation). Travel time is assumed to be a constant fraction of selling time. It causes \emph{travel costs} and is approximated by a function of distance between a location and the SCUs within its sales territory.
+
+\textbf{Fixed cost per period} refers to the expenses associated with establishing and maintaining sales representative locations, including cosSQWts such as rent, utilities, and equipment. The fixed cost per period can vary depending on the number of salespersons assigned to a location and the amount of selling time allocated to each salesperson. The relationship between fixed cost per period and the number of salespersons and selling time allocated to them is not linear, but rather takes the shape of a concave curve. This is due to the fixed cost being distributed among the salespersons and their assigned selling time at the sales representative location, leading to a decrease in fixed cost per employee as the number of employees and selling time increase.
+
+\textbf{Problem Statement.} Our objective is to solve the above stated sub-problems simultaneously while maximizing the \emph{total profit}. The total profit is a function of the \emph{profit contributions} obtained by the sales representatives and the incurred fixed costs. Profit contribution is a function of revenue generated for each product sold and the variable cost associated with selling activities, especially travel cost.
+
+
+
+\section{Mathematical Model}
+
+\subsection{Profit contribution}
+Profit contribution is an important coefficient of the objective function. It is computed as the difference of revenue from generated sales and the associated (variable) selling cost. The (expected) sales are usually computed by a sales response function. Total sales depend on the calling time a sales representative assigns to a Sales Coverage Unit (SCU). We assume calling time to be a constant fraction of the total selling time, so the total sales depend on the selling time. In our application, selling costs solely depend on the travel time spent to visit customers and are calculated by a selling cost function. We define the sets and parameters
+
+\begin{itemize}
+\setlength{\labelsep}{1em}
+    \item[$J$] set of SCUs, indexed by $j$ and $v$,
+    \item[$I$] set of candidate SCUs to locate sales representatives, indexed by $i$ ($I \subseteq J$),
+    \item[$M$] maximum allowed sales team size, i.e., the number of sales representatives to be employed at the same location with $m=1,...,m=M$,
+    \item[$\mathcal{M}$] set of sales team size $m$,
+    \item[$T$] maximum selling time available per sales representative per period and sales team
+    \item[$t$] selling time the sales representatives located in SCU $i$ allocate to customers in SCU $j$ with $t \in \left[0,T \cdot M\right]$,
+    \item[$s_{ij}(t)$] sales response function: (expected) sales a salesteam located in SCU $i$ generates by assigning selling time $t$ to customers in SCU $j$,
+    \item[$k_{ij}(t)$] selling cost function: (travel) cost associated with the selling time sales representatives in SCU $i$ assign to SCU $j$, and
+    \item[$\alpha$] per unit profit contribution of sales.
+\end{itemize}
+
+Then the profit contribution a sales team located in SCU $i$ generates by assigning selling time $t$ to SCU $j$ is given by
+\begin{equation}
+    p_{ij}(t) = \alpha \cdot s_{ij}(t) - k_{ij}(t).
+\end{equation}
+
+It is important to note here, that we consider a concave sales response function. That is, the marginal rate of sales decreases, the more selling time is assigned to a SCU by a sales representative. If the sales response is measured on an individual account level, frequently S-shaped curves are used to map the sales response function. In case that accounts are aggregated to SCUs, [...] showed that the sales response function is always concave, given that the sales effort is allocated optimally over the accounts within the SCUs. Additionally, we assume the selling cost function to be linear in selling time. We define the sales response and selling cost functions by 
+
+\begin{equation}
+    s_{ij}(t) = \mu \cdot n_j ((1 - \beta_{ij})t)^b \text{ and}
+\end{equation}
+
+\begin{equation}
+    k_{ij}(t) = h \cdot \beta_{ij} \cdot t,
+\end{equation}
+
+\noindent with the additional symbols:
+
+\begin{itemize}
+\setlength{\labelsep}{1em}
+    \item[$b$] calling time elasticity ($0<b<1$)
+    \item[$n_j$] profitability of SCU $j$ (e.g. number of potential customers)
+    \item[$\beta_{ij}$] travel time fraction of the total selling time allocated to SCU $j$ by sales team $i$ ($0<\beta_{ij}<1$)
+    \item[$\mu$] scaling parameter ($\mu > 0$)
+    \item[$h$] cost per travel time unit ($h \geq 0$)
+\end{itemize}
+
+\noindent Consequently, the profit contribution function becomes
+\begin{equation}
+    p_{ij}(t) = c_{ij} \cdot t^b - o_{ij} \cdot t,
+\end{equation}
+
+\noindent where $c_{ij} = \alpha \cdot \mu \cdot n_j(1-\beta_{ij})^b$ and $o_{ij} = h \cdot \beta_{ij}$.
+
+\subsection{Fixed cost}
+
+Due to the capacities at the locations, the fixed costs in our application actually depend on $t$. To show this, let us introduce some additional notation. 
+
+\begin{description}
+\item[$R$] constant indicating the rent for office rooms per potential Account in a SCU
+\item[$S$] constant representing the fixed part of salary for a sales representative
+\item[$\rho$] cost degression for administration costs ($0\leq \rho \leq 1$)
+\end{description}
+
+We define fixed cost per period for locating $m$ salespersons in SCU $i$ by:
+
+\begin{equation}
+    f_{im} = R_i \cdot m ^\rho + S \cdot m \label{eq:fixcost}
+\end{equation}
+
+
+
+\subsection{Model}
+El model es basado en \cite{Haase2014}, en el modelo presentado en este paper nosotros necesitamos incluir constraints para asegurar que a cada SCU sólo se le asigneun tamano de sales persona especifico. A continuación nosotros definimos following sets and parameters: 
+\textbf{Sets}
+\begin{itemize}
+\setlength{\labelsep}{1em}
+    \item[$J_i$] set of SCUs can be assigned to sales representative located in SCU $i$ ($J_i \subseteq J$) indexed by $j$ and $v$,
+    \item[$A_j$] set of SCUs adjancent to SCUs $j$ 
+\end{itemize}
+
+\textbf{Parameters}
+
+Add parameters!
+
+Now we consider the decision variables: 
+
+\begin{description}
+	  \item[$y_{im}$]  = Binary variable. 1, if a location is set up in SCU $i$ for a salesteam of size $m$  ($y_{im} = 0$, otherwise)
+  \item[$w_{ij}$] = Binary variable. 1, if SCU $j$ is assigned to location $i$ ($w_{ij} = 0$, otherwise)
+  \item[$x_{ijt}$]  = Non-negative variables. 1, if salesteam located in SCU $i$ is allocating a selling time of $t$ to SCU $j$     ($x_{ijt} = 0$, otherwise)
+  \item[$q_{ivj}$]= Non-negative variables. Quantity of flow from $v$ to $j$ with origin in location $i$; artificial variable (contiguity)
+\end{description}
+
+Given the sets, parameters, and variables we formulate a mixed integer programming model for modular capacitated sales force deployment, the model is denoted by P1:
+
+ %% Model
+\begin{equation}
+     \max F = \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T \cdot M]} (c_{ij}t^b - o_{ij}t)  x_{ijt} - \sum_{i \in I} \sum_{m=1}^{M} f_{im} y_{im}
+     \label{eq:of}
+\end{equation}
+s.t.
+
+\begin{align}
+     T \cdot \sum_{m=1}^{M}m \cdot y_{im} - \sum_{ j \in J_i} \sum_{t\in [0,T \cdot M]} t \cdot x_{ijt}  &\ge 0   \hspace*{1cm} i \in I \label{eq:timealloc} \\[1em] 
+     w_{ij} - \sum_{t \in \left[0,T \cdot M \right]}x_{ijt} &\ge 0  \hspace*{1cm} i \in I, j \in J_i \label{eq:scu_assign} \\[1em]
+     \sum_{m=1}^{M} y_{im} &\le 1 \hspace*{1cm} i \in I \label{eq:teamsize} \\[1em]
+     \sum_{i \in I\mid j \in J_i} w_{ij}  & \le 1 \hspace*{1cm} j \in J \label{eq:distinctassign} \\[1em]
+     w_{ij} - \sum_{m=1}^{M} y_{im} &\le 0     \hspace*{1cm} i \in I,  j \in J_i \label{eq:cuts} \\[1em]
+     w_{ij} + \sum_{v \in A_j \cap J_i} \left(q_{ijv} - q_{ivj} \right) - \sum_{v \in J_i \mid \atop i=j} w_{iv} &= 0  \hspace*{1cm} i \in I,  j \in J_i \label{eq:flow1} \\[1em]
+     \left|J_i\right|\cdot w_{ij} - \sum_{v \in A_j \cap J_i} q_{ivj} &\geq 0  \hspace*{1cm} i \in I, j \in J_i \label{eq:flow2} \\[1em]
+     x_{ijt} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, t \in \left[0,T\cdot M\right] \label{eq:xvar} \\[1em]
+     q_{ijv} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, v \in A_j \label{eq:qvar} \\[1em]
+     w_{ij} &\in \{0,1\} \hspace*{1cm} i \in I, j \in J_i \label{eq:wvar} \\[1em]
+     y_{im} &\in \{0,1\} \hspace*{1cm} i \in I, m=1,\dots,M \label{eq:yvar}
+\end{align}
+
+Equation (\ref{eq:of}) maximizes the sum of profit contributions obtained by all sales representatives over the SCUs in their respective territories less the sum of fixed cost incurred by opening locations of sizes $m$. Time-allocation constraints (\ref{eq:timealloc}) ensure that any sales team $i$ cannot assign more selling time to the customers in their sales territory than there is available while (\ref{eq:scu_assign}) guarantees that locations $i$ can only assign selling time to SCUs that belong to their sales territories. (\ref{eq:teamsize}) allows at most one type of location (i.e., number of sales representatives) to be set up at any potential location $i$. Eq. (\ref{eq:distinctassign}) assign all SCUs to one or none location. (\ref{eq:cuts}) are cuts that force locations to employ at least one sales representative. Eq. (\ref{eq:flow1}) and (\ref{eq:flow2}) are flow constraints ensuring contiguous sales territories, i.e., all SCUs within a territory are connected. The variables' domains are defined by (\ref{eq:xvar})-(\ref{eq:yvar}). \\
+
+\textbf{Remarks.} \begin{itemize}
+    \item When $M=1$, the set of constraints (\ref{eq:teamsize}) is redundant and the whole model reduces to the version of \cite{Haase2014}. 
+%    \item The proposed model is a semi-infinite mixed integer linear program since there is an infinite number of variables $x_{ijt}$ each related to a point of selling time in a continuous time interval. The optimal selling times can be obtained via column generation, initialized with an arbitrary discrete set of selling times (and corresponding $x_{ijt}$). In the next section we show how the solution procedure proposed by \cite{Haase2014} can be adjusted to account for multiple modes of locations $m$.
+    \item Opening locations that employ more than one sales representative will in most cases only be optimal if fixed costs per employee (at a certain potential location) are decreasing with location size. The reason is that territories served by multiple sales representatives will in general be larger and thus, there are higher travel costs that need to be offset by a reduction of the average fixed cost. If fixed cost were a linear function of location size it would almost always be better to have many smaller sales territories to save travel cost\footnote{The exceptions to this case are, for example, situations where the number of potential locations $|I|$ is too small to cover the sales potential in the sales area if only one sales representative is employed at each location. Then it might be profitable to open locations with more than one employee to fully utilize the sales potential, even when fixed costs grow linearly with the location size.}. Therefore, we assume throughout this paper that fixed costs are a concave function of the location size. This in turn has implications on our solution approach, as the LP-relaxation of (\ref{eq:of})-(\ref{eq:yvar}) underestimates the actual fixed costs of locations where the  $y_{im}$-variables are non-integer and therefore, the upper bounds obtained via column generation are generally less tight than in \cite{Haase2014}. We address this issue by introducing a procedure to find an improved initial upper bound by applying an inner approximation to the fixed cost curves. This reduces the solution space significantly and results in tight solution gaps comparable to those in \cite{Haase2014}.
+\end{itemize}
+
+
+\section{Branch-and-Bound approach}
+First we present the branch and bound approach for solving the problem \textbf{P1}. Firstly, we define the master problem (with $0 \leq  w_{ij} \leq 1$ and $0 \leq  y_{im} \leq 1$) and the subproblem of the column generation procedure. The master problem is the relaxation of \textbf{P1}, given the relaxation problem, we compute an upper bound for \textbf{P1}. The subproblem refers to relax the integrality condition of the selling time interval [0, $T \cdot M$].
+
+
+\subsection{Restricted master problem}
+
+Since the problem formulation involves a continuous time interval (which technically contains infinite potential selling times), we need to make the problem more tractable. To do this, we replace the continuous interval of time with a discrete, or countable, set of selling times, representing the definite set of selling times allocated for each sales representative in a given SCU. The optimal selling times can be obtained via column generation, where each column represents a point of selling time in the discrete set. In the next section, we show how the solution procedure proposed by \cite{Haase2014} can be adjusted to account for multiple modes of locations $m$.
+
+
+\subsection{Subproblem}
+
+In the column generation process, we aim to select the maximum positive reduced cost. We express the reduced cost for a variable $x_{ijt}$ as $\bar{p}_{ij}(t)=p_{ij}(t) + t \cdot \sigma_i + \gamma_{ij}$, where, $\sigma_i$ is the dual variable of (\ref{eq:timealloc}) and $\gamma_i$ represents the dual variable of (\ref{eq:scu_assign}). Following the assumption by \cite{Haase2014} that $p_{ij}(t)$ is concave, we can calculate the optimal selling time by setting the derivative of $p_{ij}(t)$ to zero.
+
+
+
+\subsection{Upper bound for the linear relaxation}
+See section 4.3 paper
+To compute the upper bound we need to derivate the selling time and then computing the profit according to the selling time. Then the value of the optimal function of the relaxión
+
+$\sum_{i \in I\mid j \in J_i} w_{ij}   \le 1 \hspace*{1cm} j \in J $ \\ [$\Rightarrow$] $\overline{p}_{ij}(t_{ij}^*)$
+
+\subsection{Lower bound for the linear relaxation}
+
+
+\subsection{Initial lower bound for the integer problem}
+
+ We solve the master problem by adding a new binary variable $\theta_{im}$ and constraints (\ref{eq:minTeam})-(\ref{eq:domain}) to piece-wise linearize the concave fixed cost. For each sales representative $i$, we define a variable, $\theta_{im}$, which denotes the segment of the fixed cost curve the fixed cost of each sales representative $i$ is located. More details are explained in. The optimal solution of this problem defines the initial lower bound for problem \textbf{P1}.
+
+\begin{align}
+y_{im} &\leq \theta_{im} & m = 1 \label{eq:minTeam}  \\
+y_{im} &\leq \theta_{i,m-1} + \theta_{im}  & m = 2,\dots,M-1 \label{eq:twoSegments1}\\
+y_{im} &\leq \theta_{i,m-1} & m = M \label{eq:twoSegments2} \\
+\sum_{m=1}^{M-1} \theta_{im} &= 1 & \label{eq:oneSegment} \\
+\theta_{im} &\in \{0,1\} & i \in I, \ \ m = 1,\dots,M \label{eq:domain}
+\end{align}
+
+    
+\subsection{Column generation}
+
+
+
+
+
+
+\subsection{Compute the lower bound}
+
+\section{Computational experiments}
+
+
+\subsection{Computational study on the inﬂuence of the branching strategy}
+
+which branching strategies?
+what???
+- cambiar la tolerania en el upper y lower bound
+-
+\subsection{Comparison with \cite{Haase2014}}
+
+\subsection{Proﬁt contribution dependent on selling times and different elasticities values}
+
+
+\subsection{Problem size solution quality}
+
+
+\subsection{Computational study on the inﬂuence of the branching strategy}
+
+A qué exactamente se refiere con branching strategies
+
+
+Different ways to determine the initial lower bound and upper bound
+
+
+
+\subsection{Proﬁt contribution dependent on selling times and different elasticities}
+
+
+
+
+\bibliography{References}
+
+\appendix
+\section{Time elasticity variations}
+\small
+Reduced cost \\
+\vspace{-2mm}
+\begin{equation}
+     \bar{p}_{ijm}(t)=p_{ijm}(t) + t \cdot \sigma_i + \gamma_{ij} + \beta_{ijm}
+     \label{new_Red}
+\end{equation}
+
+$\beta_{ijm}$ = be dual variable associated with (\ref{eq:team_b}) --- New dual variable
+\vspace{-2mm}
+\subsection{Mathematical model}
+\vspace{-2mm}
+\begin{equation}
+     \max F = \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T]} \sum_{m \in \mathcal{M}}  (c_{ij}t^{b_m} - o_{ij}t)  x_{ijtm} - \sum_{i \in I} \sum_{m=1}^{M} f_{im} y_{im}
+     \label{eq:of_b}
+\end{equation}
+s.t.
+\vspace{-2mm}
+\begin{align}
+     T \cdot \sum_{m=1}^{M}m \cdot y_{im} - \sum_{ j \in J_i} \sum_{t \in [0,T]} \sum_{m \in \mathcal{M}}   x_{ijtm}  &\ge 0   \hspace*{1cm} i \in I \label{eq:timealloc_b} \\[1em] 
+     w_{ij} - \sum_{t \in [0,T]} \sum_{m \in \mathcal{M}}  x_{ijtm} &\ge 0  \hspace*{1cm} i \in I, j \in J_i \label{eq:scu_assign_b} \\[1em]
+      \sum_{t \in [0,T]}  x_{ijtm}  & \le y_{im} \hspace*{1cm} i \in I, j \in J_i, m \in \mathcal{M} \label{eq:team_b} \\[1em]
+     \sum_{m=1}^{M} y_{im} &\le 1 \hspace*{1cm} i \in I \label{eq:teamsize_b} \\[1em]
+     \sum_{i \in I\mid j \in J_i} w_{ij}  & \le 1 \hspace*{1cm} j \in J \label{eq:distinctassign_b} \\[1em]
+     w_{ij} - \sum_{m=1}^{M} y_{im} &\le 0     \hspace*{1cm} i \in I,  j \in J_i \label{eq:cuts_b} \\[1em]
+     w_{ij} + \sum_{v \in A_j \cap J_i} \left(q_{ijv} - q_{ivj} \right) - \sum_{v \in J_i \mid \atop i=j} w_{iv} &= 0  \hspace*{1cm} i \in I,  j \in J_i \label{eq:flow1_b} \\[1em]
+     \left|J_i\right|\cdot w_{ij} - \sum_{v \in A_j \cap J_i} q_{ivj} &\geq 0  \hspace*{1cm} i \in I, j \in J_i \label{eq:flow2_b} \\[1em]
+     x_{ijtm} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, t \in \left[0,T \right], m \in \mathcal{M} \label{eq:xvar_b} \\[1em]
+     q_{ijv} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, v \in A_j \label{eq:qvar_b} \\[1em]
+     w_{ij} &\in \{0,1\} \hspace*{1cm} i \in I, j \in J_i \label{eq:wvar_b} \\[1em]
+     y_{im} &\in \{0,1\} \hspace*{1cm} i \in I, m=1,\dots,M \label{eq:yvar_b}
+\end{align}
+
+
+
+\end{document}

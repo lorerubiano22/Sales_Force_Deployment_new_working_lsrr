@@ -1,0 +1,19 @@
+\ProvidesPackage{theme1}
+
+% Define beamer colors
+\setbeamercolor{frametitle}{bg=RWTH-Blue-100}
+\setbeamercolor{progress bar}{fg=RWTH-Blue-50, bg=RWTH-Blue-25}
+\setbeamercolor{title separator}{fg=RWTH-Blue-50}
+\setbeamercolor{alerted text}{fg=RWTH-Red-75}
+\setbeamercolor{example text}{fg=RWTH-Green-100}
+
+
+% slide logo
+\usepackage{textpos}
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(.85\textwidth,-1.1cm)
+\includegraphics[width=3cm]{rwth_lehrstuhl_fuer_data_and_business_analytics_bild_weiss_rgb.png}
+\end{textblock*}}
+
+% Set up metropolis theme
+\usetheme{metropolis}

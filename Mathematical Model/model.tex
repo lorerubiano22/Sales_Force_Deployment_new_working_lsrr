@@ -1,0 +1,31 @@
+\documentclass{article}
+%\usepackage{mathtools}
+\usepackage{amsmath,amsfonts,amssymb}
+\begin{document}
+
+\section{Modular capacitated sales force deployment problem - mathematical model}
+ \vspace{4em}
+\begin{equation}
+     \max F = \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T \cdot |M|]} (c_{ij}t^b - o_{ij}t)  x_{ijt} - \sum_{i \in I} \sum_{m \in M} f_{im} y_{im}
+\end{equation}
+s.t.
+
+\begin{align}
+     T \cdot \sum_{m \in M}m \cdot y_{im} - \sum_{ j \in J_i} \sum_{t\in [0,T \cdot |M|]} t \cdot x_{ijt}  &\ge 0   \hspace*{1cm} i \in I \\[1em]
+     w_{ij} - \sum_{t \in \left[0,T \cdot |M| \right]}x_{ijt} &\ge 0  \hspace*{1cm} i \in I, j \in J_i \\[1em]
+     \sum_{m \in M} y_{im} &\le 1 \hspace*{1cm} i \in I \\[1em]
+     \sum_{i \in I\mid j \in J_i} w_{ij}  & \le 1 \hspace*{1cm} j \in J \\[1em]
+     w_{ij} - \sum_{m \in M} y_{im} &\le 0     \hspace*{1cm} i \in I,  j \in J_i \\[1em]
+     w_{ij} + \sum_{v \in A_j \cap J_i} \left(q_{ijv} - q_{ivj} \right) - \sum_{v \in J_i \mid \atop i=j} w_{iv} &= 0  \hspace*{1cm} i \in I,  j \in J_i \\[1em]
+     \left|J_i\right|\cdot w_{ij} - \sum_{v \in A_j \cap J_i} q_{ivj} &\geq 0  \hspace*{1cm} i \in I, j \in J_i \\[1em]
+     x_{ijt} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, t \in \left[0,T\cdot \left|M\right|\right] \\[1em]
+     q_{ijv} &\geq 0 \hspace*{1cm} i \in I, j \in J_i, v \in A_j \\[1em]
+     w_{ij} &\in \{0,1\} \hspace*{1cm} i \in I, j \in J_i \\[1em]
+     y_{im} &\in \{0,1\} \hspace*{1cm} i \in I, m \in M
+\end{align}
+
+
+
+
+
+\end{document}

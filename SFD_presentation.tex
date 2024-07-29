@@ -1,0 +1,752 @@
+\newenvironment{defsymbols}[1]
+  {\begin{list}{}{\settowidth{\labelwidth}{#1}
+  \setlength{\leftmargin}{\labelwidth}
+  \addtolength{\leftmargin}{\labelsep}
+  \parsep 0.5ex plus 0.2ex minus 0.2ex \itemsep 0.3ex % to customize
+  \renewcommand{\makelabel}[1]{ ##1 \hfill}}}{\end{list}\vspace*{0.25cm}}
+
+\newcounter{stepnr}
+\setcounter{stepnr}{1}
+\def\step{{\em step} & {\em\thestepnr:} \stepcounter{stepnr}}
+
+
+
+
+\documentclass[xcolor=dvipsnames,aspectratio=169, handout]{beamer}
+% \usepackage{amsmath,amsfonts,amssymb}
+% %\pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm,landscape]
+% %\usepackage{ulem}
+% \usepackage{pgfpages}
+% \usepackage{transparent}
+% \usepackage{booktabs}
+\usepackage{mathtools}
+\usepackage[mode=buildnew]{standalone}
+% \usepackage{subfigure}
+% %\usepackage{subfig}
+% \usepackage{tikz}
+% \usetikzlibrary{shapes}
+% \usetikzlibrary{arrows,backgrounds,shapes, calc,decorations.pathmorphing,patterns,plotmarks}
+
+
+\newcommand{\prof}{Lucas Weber}
+\newcommand{\course}{Modular Capacitated Sales Force Deployment Problem}
+
+\input{presentationOVGU.tex}
+
+
+\begin{document}
+
+\title[DCA]{{\sffamily \textbf{\LARGE \course \\  [1.5ex] }}}
+\author[Müller]{\textbf{{\sffamily \prof }}}
+
+
+\titlegraphic{
+%	\includegraphics[width=0.2\textwidth]{../../logo/logo_ba}
+}
+
+\begin{frame}[plain]
+\begin{backgroundblock}{100mm}{0mm}
+{\transparent{0.2}\includegraphics[width=0.5\textwidth]{ovgu_logo_75}}
+\end{backgroundblock}
+\titlepage
+\end{frame}
+
+\begin{frame}{\textbf{Subproblems in Sales Force Deployment}}
+\begin{figure}
+ \begin{minipage}[b]{0.45\linewidth} \centering
+  \input{SFDsize2.tex}\\
+	Sales force size 
+ \end{minipage}
+\uncover<2->{
+ \begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDlocate2.tex}\\
+	Salespersons' location
+	\end{minipage}
+	}
+	\vspace{0.5cm}
+	\uncover<3->{
+	\begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDalign2.tex}\\
+	Sales territory alignment
+	\end{minipage}
+	}
+	\uncover<4->{
+	\begin{minipage}[b]{0.45\linewidth} \centering
+	\input{SFDallocate2.tex}\\
+	Resource allocation
+	\end{minipage}
+	}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{\textbf{Outline}}
+	\tableofcontents
+	\end{frame}
+
+\section{Terminology \& Problem}
+
+\begin{frame}{\textbf{Terminology}}
+\begin{itemize}
+	\item \textbf{Sales coverage unit} (SCU): containing customers and/or salespersons
+
+\includestandalone[width=0.8\linewidth]{sales_area_plain.tex}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{\textbf{Terminology}}
+\begin{itemize}
+	\item \textbf{Sales coverage unit} (SCU): containing customers and/or salespersons
+\end{itemize}
+	\begin{itemize}[<+->]
+	\item \textbf{Selling time}: optimally allocated to customers within an SCU
+	\begin{itemize}
+	  \item[$=$] sum of 
+		\item Travel time: approximated by (function of) distance between SCUs
+	  \item Calling time: 
+		\begin{itemize}
+			\item time at customer (product presentation, f.e.) 
+			\item depends on travel time
+		\end{itemize}
+	\end{itemize}	
+	\item \textbf{Sales}: function of selling time
+	\item \textbf{Cost}:
+	\begin{itemize}
+	\item Fixed locational cost: fixed part of salary, rent
+	\item Travel cost: function of distance
+	\end{itemize}
+	\item \textbf{Profit contribution}: function of sales and travel cost
+	\item \textbf{Total profit} (Objective): function of profit contribution and fixed cost
+\end{itemize}
+\end{frame}
+
+
+%\section{Profit Contribution}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Profit Contribution}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Coefficients of the Objective Function}}
+\begin{description}
+	\item[$J$]       set of sales coverage units (SCUs), indexed by $j$ and $v$
+  \item[$I$]       set of SCUs ($I \subseteq J$) for locating teams of salespersons, indexed by $i$
+\end{description}
+\begin{center}
+\includestandalone[width=0.7\linewidth]{sales_area_locs.tex}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{\textbf{Coefficients of the Objective Function}}
+\begin{description}
+	\item[$J$]       set of sales coverage units (SCUs), indexed by $j$ and $v$
+  \item[$I$]       set of SCUs ($I \subseteq J$) for locating teams of salespersons, indexed by $i$
+  \item[$M$] maximum allowed sales team size with $m = 1,\dots,M$
+  \item[$T$] maximum selling time available per salesperson per period
+%  \item[$\mathfrak{T}$] maximum selling time available per location with $\mathfrak{T}=\mathcal{S} \cdot|M|$
+  \item[$t$]       selling time with $t \in \left[0,T \cdot M\right]$									
+  \item<2->[$s_{ij}(t)$]  sales response function
+  \item<2->[$k_{ij}(t)$]  selling cost function
+	\item<2->[$\alpha$] per unit profit contribution of sales
+\end{description}
+\vfill
+\uncover<2->{
+\begin{block}{\textbf{Profit Contribution Function}}
+\begin{equation}
+   p_{ij}(t) =  \alpha \cdot s_{ij}(t) - k_{ij}(t) 
+\end{equation}
+\end{block}
+}
+\end{frame}
+
+
+
+
+
+\begin{frame}{\textbf{Profit Contribution Function}}
+\begin{columns}
+\column{0.5\linewidth}
+\centering
+\begin{align*}
+\Aboxed{p_{ij}(t) &= c_{ij} \cdot t^b - o_{ij} \cdot t}\\
+0 &< b < 1 \\
+c_{ij} &\geq 0 \\
+o_{ij} &\geq 0 \\
+%c_{ij} &=  \alpha \cdot \mu \cdot n_j \, (1- \beta_{ij})^b\\
+%o_{ij} &=  h \cdot \beta_{ij}
+\end{align*}
+\column{0.5\linewidth}
+\begin{figure}[h!]
+	\centering
+%		\includegraphics[width=1.00\textwidth]{ProfitContri_Elast.pdf}
+\scalebox{1}{
+\input{TEX_ProfitContri_Elast.tex}
+}
+	\label{fig:ProfitContri_Elast}
+\end{figure}
+%$c_{ij}=1$ and $o_{ij}=0$
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{\textbf{Sales Force Deployment Problem}}
+\begin{block}{\textbf{Problem Statement}}
+Determine the appropriate \textbf{sales force size} and corresponding \textbf{locations}, construct a
+contiguous \textbf{sales territory} for each salesteam, and allocate the total available
+\textbf{selling time} of each salesteam over its sales territory so that the sum of \textbf{profit}
+contributions obtained by the salespersons less the fixed location costs is \textbf{maximized}.
+\end{block}
+\begin{figure}
+\centering
+ \begin{minipage}[b]{0.2\linewidth} \centering
+  \input{SFDsize2.tex}
+	\footnotesize Sales force size 
+ \end{minipage}
+ \begin{minipage}[b]{0.2\linewidth} \centering
+	\input{SFDlocate2.tex}
+	\footnotesize Salespersons' location
+	\end{minipage}
+	\begin{minipage}[b]{0.25\linewidth} \centering
+	\input{SFDalign2.tex}\\
+	\footnotesize Sales territory alignment
+	\end{minipage}
+	\begin{minipage}[b]{0.2\linewidth} \centering
+	\input{SFDallocate2.tex}
+	\footnotesize Resource allocation
+	\end{minipage}
+\end{figure}
+
+
+% \uncover<2->{
+% \textbf{Issues}
+% \begin{itemize}
+% 	\item Selling time is a real number
+% 	\item Profit contribution: non-linear function of selling time
+% 	\item Contiguous sales territory
+% \end{itemize}
+% }
+\end{frame}
+
+
+\section{Model Formulation}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Model Formulation}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Additional Notation}}
+\textbf{Sets and parameters}
+\begin{description}
+	\item[$J_i$]     set of SCUs assignable to a salesteam located in SCU $i$ ($J_i \subseteq J$)
+\end{description}
+\uncover<2->{
+\begin{center}
+\includestandalone[width=0.7\linewidth]{sales_area_potentialTerritory.tex}
+\end{center}
+}
+\end{frame}
+
+\begin{frame}{\textbf{Additional Notation}}
+\textbf{Sets and parameters}
+\begin{description}
+	\item[$J_i$]     set of SCUs assignable to a salesteam located in SCU $i$ ($J_i \subseteq J$)
+  \item[$A_j$]		 set of SCUs adjacent to SCU $j$
+  %\item[$T$]       total available selling time of a salesperson per period
+  \item[$f_{im}$]   fixed cost per period for locating $m$ salespersons in SCU $i$
+\end{description}
+\uncover<2->{
+\textbf{Binary variables}
+\begin{description}
+	  \item[$y_{im}$]  =1, if a location is set up in SCU $i$ for a salesteam of size $m$  ($y_{im} = 0$, otherwise)
+  \item[$w_{ij}$] =1, if SCU $j$ is assigned to location $i$ ($w_{ij} = 0$, otherwise)
+\end{description}
+}
+\uncover<3->{
+\textbf{Non-negative variables}
+\begin{description}
+  \item[$x_{ijt}$]  =1, if salesteam located in SCU $i$ is allocating a selling time of $t$ to SCU $j$     ($x_{ijt} = 0$, otherwise)
+  \item[$q_{ivj}$] quantity of flow from $v$ to $j$ with origin in location $i$; artificial variable (contiguity)
+\end{description}
+}
+\end{frame}
+
+\begin{frame}{\textbf{Model Formulation Based on Haase/Müller (2014)}}
+\footnotesize
+\begin{equation}
+ \text{Maximize } \ F =  \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T \cdot M]} p_{ij}(t)  x_{ijt} - \sum_{i \in I} \sum_{m=1}^M f_{im} y_{im}  \label{sfd-mod-of}
+\end{equation}
+
+\begin{align}
+\text{Time Allocation} && \sum_{ j \in J_i} \sum_{t\in [0,T \cdot M]} t \cdot x_{ijt} &\leq T \cdot \sum_{m=1}^M m \cdot y_{im}  &i \in I \\
+\text{Sales Team Assignment} && \sum_{m=1}^M y_{im} &\le 1 &i \in I \\
+\text{Cuts} && w_{ij} &\le  \sum_{m = 1}^M y_{im} &i \in I,  j \in J_i 
+\end{align}
+\normalsize
+\uncover<2->{
+Unchanged constraints (Haase/Müller (2014)):
+\begin{itemize}
+    \item SCU Assignment (coupling of $x_{ijt}$ and $w_{ij}$)
+    \item Distinct Assignment (a SCU can only be assigned to one or none location)
+    \item Contiguity Constraints (SCUs within each sales territory must be connected)
+\end{itemize}}
+\end{frame}
+
+
+
+% \begin{frame}{\textbf{Model Formulation}}
+
+
+% \begin{block}{SCU Assignment}
+% \begin{equation}
+% \sum_{t \in \left[0,T \cdot M \right]}x_{ijt} \leq w_{ij}   \hspace*{1cm} i \in I, j \in J_i \label{sfd-mod-aggvar}
+% \end{equation}
+% \end{block}
+
+% \uncover<2->{
+% \begin{block}{Sales Team Assignment}
+% \begin{equation}
+% \sum_{m=1}^M y_{im} \le 1     \hspace*{1cm} i \in I
+% \end{equation}
+% \end{block}
+% }
+
+% \end{frame}
+
+
+% \begin{frame}{\textbf{Model Formulation}}
+
+% \begin{block}{Cuts}
+% \begin{equation}
+% w_{ij} \le  \sum_{m = 1}^M y_{im}      \hspace*{1cm} i \in I,  j \in J_i 
+% \end{equation}
+% \end{block}
+% \uncover<2->{
+% \begin{block}{Distinct Assignment}
+% \begin{equation}\label{eq_scuassign}
+% \sum_{i \in I\mid j \in J_i} w_{ij}   \le 1 \hspace*{1cm} j \in J 
+% \end{equation}
+% \end{block}
+% }
+
+% \vfill
+% \end{frame}
+
+% \begin{frame}{\textbf{Model Formulation}}
+%     \begin{block}{Contiguity Constraint 1: Flow Constraints}
+% \begin{equation}
+% w_{ij} + \sum_{v \in A_j \cap J_i} \left(q_{ijv} - q_{ivj} \right) - \sum_{v \in J_i \mid \atop i=j} w_{iv} = 0  \hspace*{1cm} i \in I,  j \in J_i
+% \end{equation}
+% \end{block}
+
+% \uncover<2->{
+% \begin{block}{Contiguity Constraint 2: Flow Assignment}
+% \begin{equation}\label{eq-sfd-lastcont}
+% \left|J_i\right|\cdot w_{ij} - \sum_{v \in A_j \cap J_i} q_{ivj} \geq 0  \hspace*{1cm} i \in I, j \in J_i 
+% \end{equation}
+% \end{block}
+% }
+% \end{frame}
+
+
+
+% \begin{frame}{\textbf{Flow-Based Representation of Contiguity}}
+% \setbeamercovered{invisible}
+% \include{contiguity}
+% \setbeamercovered{transparent=10}
+% \end{frame}
+
+\section{Solution Approach}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Solution Approach}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Semi-Infinite Linear Program}}
+\begin{block}{Issue}
+Infinite number of variables $x_{ijt}$ due to $t \in \left[ 0,T \cdot M \right]$
+\end{block}
+\bigskip
+\uncover<2->{
+\textbf{Solution}
+}
+\begin{itemize}
+  \item<2-> Relax integrality of $w_{ij}$ and $y_{im}$ (LP-relaxation)
+  \item<3-> Replace $[0,T \cdot M]$ by finite subset $T_{ij} \subset [0,T \cdot M]$  
+	\item<4-> Solve LP-relaxation by column generation
+	\item<5-> Branch-and-Price to obtain integer solution
+\end{itemize}
+\vfill
+\uncover<2->{
+\textbf{Outcome}
+}
+\begin{itemize}
+  \item<2-> \uncover<3->{Restricted} Master Problem
+  \item<5-> Upper and lower bounds on the semi-infinte MIP
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{CG Outline}
+\begin{center}
+\scalebox{0.55}{
+\input flow_chart_CG.tex
+}
+\end{center}
+\end{frame}
+
+\section{Results}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Results}}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{\textbf{Artificial Sales Area - Visualization}}
+\begin{center}
+    \includestandalone[width=0.75\linewidth]{sales_area.tex}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Artificial Sales Area - Results}}
+\begin{minipage}{0.48\linewidth}
+\begin{center}
+    $M = 1$\\[0.5em]
+    \includestandalone[width=\linewidth]{solu_mip_m1} \\[-0.5cm]
+    \begin{align*}
+    \underline{F}&=675,897.73 \\
+    \text{Sales} &= 1,272,122.23 \\
+    \text{Fixed Cost} &= 553,000 \\
+    \text{Travel Cost} &= 43,224.50
+    \end{align*}
+    
+\end{center}
+\end{minipage}
+\begin{minipage}{0.48\linewidth}
+\begin{center}
+    $M=5$ \\[0.5em]
+    \includestandalone[width=\linewidth]{solu_mip_m5} \\[-0.5cm]
+    \begin{align*}
+    \underline{F}&=716,490.24 \\
+    \text{Sales} &= 1,461,123.84 \\
+    \text{Fixed Cost} &= 665,530 \\
+    \text{Travel Cost} &= 79,103.60
+    \end{align*}
+\end{center}
+\end{minipage}
+\end{frame}
+
+% \begin{frame}{\textbf{Artificial Sales Area - MIP Results}}
+% \begin{center}
+%     \includestandalone[width=0.75\linewidth]{res_mip.tex}
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{\textbf{Artificial Sales Area - MIP Results ($M=1$, Haase \& Müller (2014))}}
+% \begin{center}
+%     \includestandalone[width=0.7\linewidth]{res_mip_m=1_2.tex}\\
+%     $\underline{F}^\text{MIP}=696,397.49$
+% \end{center}
+% \end{frame}
+
+% \begin{frame}{\textbf{Some Observations}}
+% \begin{itemize}
+%     \item solving the LP-relaxation when $M$ is sufficiently large, typically leads to: $w_{ij} \in \{0,1\}, \ \ x_{ijt} \in \{0,1\}, \ \ y_{im} \in [0,1]$
+%     \item when $M$ is too small, then for many $i,j,t,m$ we get: \\ $w_{ij} \in [0,1], \ \ x_{ijt} \in [0,1], \ \ y_{im} \in [0,1]$
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}{\textbf{Computational Study}}
+\begin{center}
+    \small
+    \begin{tabular}{cccrrrrr}
+    \toprule
+        $|J|$ & $|I|$ & $M$ & $\overline{F}_0/100$ & $\underline{F}/100$ & $\epsilon$\footnote{$\epsilon=\left(\frac{\overline{F}_0-\underline{F}}{\overline{F}_0} \right) \cdot 100$} &  $\text{CPU-Time}$ (sec.)  \\ \midrule
+        36 & 12 & 5 & 7,407.05 & 7,164.90 & 3.27 \%  & 28.36 \\
+        36 & 12 & 1 & 6,764.11 & 6,758.97 & 0.08 \%   & 10.32  \\ \midrule
+        64 & 20 & 5 & 13,883.32 & 13,417.37 & 3.36 \%  & 220.14  \\
+        64 & 20 & 1 & 12,620.52 & 12,615.57 & 0.04 \% & 33.73 \\ \midrule
+        100 & 30 & 5 & 21,915.31 & 21,353.11 & 2.57 \%  & 3157.98 \\
+        100 & 30 & 1 & 19,312.03 & 19,292.88 & 0.10 \%  & 6303.85 \\ \midrule 
+        225 & 50 & 5 & 45,258.40 & 44,002.20 & 2.78 \%  & 7200.00  \\
+        225 & 50 & 1 & 40,059.29 & 40,016.51 & 0.11 \%  & 1109.85  \\ \bottomrule
+    \end{tabular}
+\end{center}
+\end{frame}
+
+
+
+
+
+
+% \begin{frame}{\textbf{Computational Study}}
+% \begin{center}
+% \small
+% \begin{tabular}{ccrrrrr}
+% \toprule
+%     $|J|$ & $|I|$ & $\gamma$\footnote{stepsize for the set of selling times: $t \in \{0,\gamma, 2 \cdot \gamma, \dots, 8000 \}$} & Variables & Constraints  & CPU time (sec.) & Objective  \\ \midrule
+%     36 & 10 & 100  & 22,599    & 1,129  & 0.63   & 645,097 \\
+%     36 & 10 & 10   & 215,559   & 1,129  & 5.63   & 647,200 \\
+%     36 & 10 & 1    & 2,145,159 & 1,129  & 62.42  & 647,234 \\ \midrule
+%     64 & 20 & 100  & 53,036    & 2,621  & 2.97   & 1,180,201 \\
+%     64 & 20 & 10   & 505,916   & 2,621  & 20.96  & 1,184,496 \\
+%     64 & 20 & 1    & 5,034,716 & 2,621  & 763.68 & 1,184,549 \\ \midrule
+%     100 & 30 & 100 & 88,899    & 4,377  & 7.54   & 1,763,482 \\
+%     100 & 30 & 10  & 847,779   & 4,377  & 35.74  & 1,769,272 \\ \midrule
+%     144 & 45 & 100 & 154,281   & 7,551  & 22.16  & 2,407,423 \\
+%     144 & 45 & 10  & 1,471,161 & 7,551  & 144.70 & 2,417,210 \\ \midrule
+%     225 & 70 & 100 & 247,750   & 12,114 & 567.41 & 4,153,217 \\ \bottomrule
+% \end{tabular}
+% \end{center}
+
+% \end{frame}
+
+\section{Outlook}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Outlook}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Outlook}}
+    \begin{itemize}[<+->]
+     \item fair sales territory design
+     \item simultaneous districting-scheduling problem
+     \item alignment of "sub-territories" for sales territories with sales team sizes > 1
+     \item Application: CLAAS South Africa
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Thank you!}} \\[1em]
+{\LARGE \textbf{Questions?}}
+\end{center}
+\end{frame}
+
+\section{Backup slides}
+\subsection{Sales Response Function}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Concave Sales Response Function}}
+\end{center}
+\end{frame}
+\begin{frame}{\textbf{Exemplary Functions} (Skiera/Albers, 1998 \& Drexl/Haase, 1999)}
+Concave \textbf{sales response function}:
+\begin{equation} \label{sfd-sales-response-function}
+s_{ij}(t) = \mu \cdot n_j \, (\, (\, 1- \beta_{ij} \,)\, t\, ) ^ b 
+\end{equation}
+
+\textbf{cost function}:
+\begin{equation} \label{sfd-cost-function}
+k_{ij}(t) = h \cdot \beta_{ij} \cdot t
+\end{equation}
+\vfill
+\begin{description}
+    \item[$\mu$]  scaling parameter ($\mu > 0$)
+     \item[$n_j$] indicator for the 'calling time profitability' of SCU $j$ 
+     \item[$\beta_{ij}$] travel time fraction of the selling time allocated to SCU $j$ 
+                    by the salespersons located in SCU $i$
+                   ($0 < \beta_{ij} < 1$)
+			\item[$b$] calling time elasticity ($0< b < 1$)						
+     \item[$h$]     cost per travel time unit ($h \ge 0$)
+		\end{description}
+	%	\uncover<7->{
+% 		\begin{block}{Parameters $b$ and $\mu$} estimated by econometric data analysis. See f.e., M\"uller et al., 2013 (\textit{JRCS}) and M\"uller/Haase, 2015 (\textit{EJM})	
+% \end{block}
+%}
+\end{frame}
+
+\subsection{Complete Model Formulation}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Complete Model Formulation}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Model Formulation}}
+
+%\begin{minipage}{0.49\linewidth}
+\tiny
+\begin{equation}
+\text{Maximize } \ F =  \sum_{i \in I} \sum_{j \in J_i} \sum_{t \in [0,T \cdot M]} p_{ij}(t)  x_{ijt} - \sum_{i \in I} \sum_{m=1}^M f_{im} y_{im}  %\label{sfd-mod-of}
+\end{equation} 
+
+\begin{align}
+    \sum_{ j \in J_i} \sum_{t\in [0,T \cdot M]} t \cdot x_{ijt} &\leq T \cdot \sum_{m=1}^M m \cdot y_{im} &i \in I \\
+    \sum_{t \in \left[0,T \cdot M \right]}x_{ijt} &\leq w_{ij} &i \in I, j \in J_i \\
+    \sum_{m=1}^M y_{im} &\le 1 &i \in I \\
+    w_{ij} &\le  \sum_{m = 1}^M y_{im} &i \in I,  j \in J_i \\
+    \sum_{i \in I\mid j \in J_i} w_{ij}   &\le 1 &j \in J \label{eq_scuassign} \\
+    w_{ij} + \sum_{v \in A_j \cap J_i} \left(q_{ijv} - q_{ivj} \right) - \sum_{v \in J_i \mid \atop i=j} w_{iv} &= 0 &i \in I,  j \in J_i \\
+    \left|J_i\right|\cdot w_{ij} - \sum_{v \in A_j \cap J_i} q_{ivj} &\geq 0 &i \in I, j \in J_i 
+\end{align}
+\normalsize
+
+
+%\end{minipage}
+
+\end{frame}
+
+
+
+
+\subsection{Column Generation Procedure}
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Column Generation Procedure}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Subproblem}}
+\begin{block}{Reduced Cost Function of $x_{ijt}$}
+\begin{equation}\label{eqredcost}
+\overline{p}_{ij}(t) =  p_{ij}(t) -  t \cdot \sigma_i  - \gamma_{ij}
+\end{equation}
+\end{block}
+\textbf{dual variables} $\sigma_{i}$ and $\gamma_{ij}$ correspond to
+\begin{align*}
+\text{Time Allocation} &&   \sum_{ j \in J_i} \sum_{t\in [0,T \cdot M]} t \cdot x_{ijt}  & \leq T \cdot \sum_{m = 1}^M m \cdot y_{im}   & \left(\sigma_{i}\right)&& i \in I \\
+\text{SCU Assignment} &&   \sum_{t \in \left[0,T \cdot M \right]}x_{ijt} & \leq w_{ij}  & \left(\gamma_{ij}\right)&& i \in I, j \in J_i 
+\end{align*}
+\vspace{-0.3cm}
+
+\begin{block}{Subproblem}
+Maximize \eqref{eqredcost} with respect to $t$ and check 
+\begin{equation} \label{sfd-pricing}
+\forall \ i \in I, j \in J, t \in [0,T \cdot M]: \hspace{0.25cm} 
+\overline{p}_{ij}(t) \le 0  
+\end{equation}
+\end{block}
+\end{frame}
+
+\begin{frame}{\textbf{Solution of the Subproblem}}
+Reduced cost function based on examplary sales response function \eqref{sfd-sales-response-function}
+\[
+  \overline{p}_{ij}(t) =   c_{ij} \cdot t^b - o_{ij} t  - \sigma_i t - \gamma_{ij}  
+\]
+
+\noindent Differentiating with respect to $t$ and setting the derivative equal to zero leads to: 
+\begin{equation}
+              b \cdot c_{ij} \cdot t^{b-1} - o_{ij} - \sigma_i = 0 
+\end{equation}
+
+
+\centerline{$\Downarrow$} 
+\begin{equation} 
+  t_{ij}^* = \left\{ \begin{array}{c@{\quad:\quad}l}
+          \min \left(  \left({\frac{ o_{ij} + \sigma_i } { b \cdot
+          c_{ij}}}\right)^{ \frac{1}{(b-1)}},T \cdot M \right)
+                     & 
+                   o_{ij} +  \sigma_i > 0\\
+              T \cdot M &  \mbox{otherwise}
+ \end{array} \right.
+\end{equation} 
+
+
+
+ $ \overline{p}_{ij} (t_{ij}^*) > 0$ $\Rightarrow$ $T_{ij} \cup \left\{t_{ij}^*\right\}$\\[1.5ex]
+ $ \overline{p}_{ij} (t_{ij}^*) \le 0 \; \;\forall \ i,j$ $\Rightarrow$ optimal solution of LP-relaxation
+
+\end{frame}
+
+
+\begin{frame}{\textbf{Upper Bound for the Linear Relaxation}} 
+Note,
+\begin{itemize}
+	\item $0\le x_{ijt} \le 1$
+	\item Assignment constraint \eqref{eq_scuassign}: $\sum_{i \in I\mid j \in J_i} w_{ij}   \le 1 \hspace*{1cm} j \in J $
+	\item[$\Rightarrow$] $\overline{p}_{ij}(t_{ij}^*)$ realized for at most one location $i$
+\end{itemize}
+\vfill
+
+Best possible improvement of the objective function value by (re-)assigning SCU $j$ to location $i$:
+\[
+	\overline{p}_j^* = \max \{\left(\overline{p}_{ij}(t_{ij}^*)\mid i \in I\right),0\}
+\]
+
+
+\begin{block}{Danzig-Wolfe-Bound}
+\[ \overline{F}^{\text{LP}} = z^* +\sum_{j} \overline{p}_j^*\]
+\end{block}
+$z$ : objective function value of the restricted master problem\\
+%$\overline{F} = \overline{F}^{\text{LP}}$
+
+\end{frame}
+
+\subsection{Branch-and-Bound}
+
+\begin{frame}{\textbf{Branch-and-Bound}}
+
+\textbf{Integer solution:}
+\begin{itemize}
+    \item perform column generation in each node of a B\&B tree
+        \begin{enumerate}
+            \item Branch on non-integer locational variables $y_{im}$
+                \begin{itemize}
+                    \item Idea: define $I':= I \setminus \{i: y_{im} \in \{0,1\} \ \ \forall m \in \{1,\dots,M\}\}$
+                    \item $\forall i \in I'$ compute $ \mathfrak{m}_i = \sum_{m =1}^M m \cdot y_{im}$ 
+                    \item find $k = \arg \min_{i\in I'}|\lfloor \mathfrak{m}_i \rceil- \mathfrak{m}_i|$ 
+                    \item branch on $y_{k,\lfloor \mathfrak{m}_{k} \rceil}$
+                \end{itemize}
+            \item Branch on non-integer assignment variables $w_{ij}$
+        \end{enumerate}
+    \item Backtracking:
+        \begin{itemize}
+            \item an improved lower bound $\underline{F}$ was found
+            \item $\frac{\overline{F}^{LP}}{\underline{F}} \leq 1 + \eta$ (e.g. $\eta = 0.001$)
+            \item a node was considered two times
+        \end{itemize}
+    \item Termination: all nodes are fathomed or a predefined maximum computation time is reached
+\end{itemize}
+    
+\end{frame}
+
+
+\subsection{Instance generation}
+
+\begin{frame}
+\begin{center}
+{\LARGE \textbf{Instance generation}}
+\end{center}
+\end{frame}
+
+\begin{frame}{\textbf{Artificial Sales Area - Instance generation}}
+\textbf{Additional Symbols}
+\begin{description}
+  \item[$\tilde{d}_{jv}$] distance in travel time units between SCUs $j$ and $v$ with $\tilde{d}_{jv|v \in A_j} \sim \mathcal{U}[0.5,1.5]$, $\tilde{d}_{jv|v \notin A_j}=\infty$
+  \item[$d_{ij}$] distance of the shortest path from candidate location $i$ to SCU $j$ in travel time units
+\end{description}
+
+\textbf{Profit contribution function}
+\begin{itemize}
+\item $p_{ij}(t) = \alpha \cdot \mu \cdot n_j \, (\, (\, 1- \beta_{ij} \,)\, t\, ) ^ b - h \cdot \beta_{ij} \cdot t$
+\item $\alpha \cdot \mu = 125$; $b=0.35$; $h=20$
+\item $n_j \sim \mathcal{U}\{5,85\}$
+\item $\beta_{ij}=0.1+ \min \{0.9,2 \cdot d_{ij}/8\} $
+\end{itemize}
+
+
+\textbf{Sets and parameters}
+\begin{itemize}
+%    \item $|J|=36$; $|I|=10$; $M=5$; $T=1600$
+%    \item $t \in \{0,10,20,\dots,8000 \}$
+    \item $j \in J_i|d_{ij} < 3.6$ 
+    \item $f_{im} = 1000 \cdot n_{i} \cdot \ln{(e-1+m)} + 36000 \cdot m$
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\end{document}

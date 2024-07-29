@@ -1,0 +1,51 @@
+\begin{tikzpicture}[decorate,thick,scale=0.85, every node/.style={scale=0.8}]
+\pgfmathsetseed{4321}
+%decoration=penciline,
+ % \draw[style=help lines] (0,0) grid[step=1cm] (4,4);
+	%% person 1
+	\draw[decorate,fill=structure.fg] (.5,3) -- (.25,2.5) -- (.75,2.5) -- (.5,3);
+	\node at (.5,2.65) {\footnotesize\textcolor{white}{A}};
+	\draw[ultra thick,decorate] (.35,2.5)--(.35,2.25);
+	\draw[ultra thick,decorate] (.65,2.5)--(.65,2.25);
+	\node[decorate,draw,circle,fill=structure.fg,inner sep=0.1cm] at (.5,3) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (.45,3.05) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (.55,3.05) {};
+    \draw[thick, white] (.35,2.95) -- (.45,2.9) -- (.55,2.9) -- (.65,2.95);
+
+  %% person 2
+	\draw[decorate,fill=structure.fg] (1.5,3) -- (1.25,2.5) -- (1.75,2.5) -- (1.5,3);
+	\node at (1.5,2.65) {\footnotesize\textcolor{white}{B}};
+	\draw[ultra thick,decorate] (1.35,2.5)--(1.35,2.25);
+	\draw[ultra thick,decorate] (1.65,2.5)--(1.65,2.25);
+	\node[decorate,draw,circle,fill=structure.fg,inner sep=0.1cm] at (1.5,3) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (1.45,3.05) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (1.55,3.05) {};
+	\draw[thick, white] (1.35,2.95) -- (1.45,2.9) -- (1.55,2.9) -- (1.65,2.95);
+  %% person 3
+	\draw[decorate,fill=structure.fg] (2.5,3) -- (2.25,2.5) -- (2.75,2.5) -- (2.5,3);
+	\node at (2.5,2.65) {\footnotesize\textcolor{white}{C}};
+	\draw[ultra thick,decorate] (2.35,2.5)--(2.35,2.25);
+	\draw[ultra thick,decorate] (2.65,2.5)--(2.65,2.25);
+	\node[decorate,draw,circle,fill=structure.fg,inner sep=0.1cm] at (2.5,3) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (2.45,3.05) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (2.55,3.05) {};
+	\draw[thick, white] (2.35,2.95) -- (2.45,2.9) -- (2.55,2.9) -- (2.65,2.95);	
+	%% person 4
+	\draw[decorate,fill=structure.fg] (.5,2) -- (.25,1.5) -- (.75,1.5) -- (.5,2);
+	\node at (.5,1.65) {\footnotesize\textcolor{white}{D}};
+	\draw[ultra thick,decorate] (.35,1.5)--(.35,1.25);
+	\draw[ultra thick,decorate] (.65,1.5)--(.65,1.25);
+	\node[decorate,draw,circle,fill=structure.fg,inner sep=0.1cm] at (.5,2) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (.45,2.05) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (.55,2.05) {};
+	\draw[thick, white] (.35,1.95) -- (.45,1.9) -- (.55,1.9) -- (.65,1.95);
+	%% person 5
+	\draw[decorate,fill=structure.fg] (1.5,2) -- (1.25,1.5) -- (1.75,1.5) -- (1.5,2);
+	\node at (1.5,1.65) {\footnotesize\textcolor{white}{E}};
+	\draw[ultra thick,decorate] (1.35,1.5)--(1.35,1.25);
+	\draw[ultra thick,decorate] (1.65,1.5)--(1.65,1.25);
+	\node[decorate,draw,circle,fill=structure.fg,inner sep=0.1cm] at (1.5,2) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (1.45,2.05) {};
+	\node[draw=white,circle,fill=white,inner sep=0.01cm] at (1.55,2.05) {};
+	\draw[thick, white] (1.35,1.95) -- (1.45,1.9) -- (1.55,1.9) -- (1.65,1.95);
+\end{tikzpicture}

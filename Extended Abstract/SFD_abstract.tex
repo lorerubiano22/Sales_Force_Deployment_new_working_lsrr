@@ -1,0 +1,154 @@
+%\documentclass[12pt, a4paper, twoside, titlepage]{article}
+\documentclass[12pt]{scrartcl}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{natbib}
+\bibliographystyle{agsm} 
+\usepackage{amsmath,amssymb,amstext}
+\usepackage{amsfonts}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{courier}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{siunitx}
+\hypersetup{
+	colorlinks = true,
+	citecolor = blue
+}
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{color, colortbl}
+\usepackage{framed}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{threeparttable}
+\usepackage{rotating}
+\usepackage[mode=buildnew]{standalone}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{adjustbox}
+\usepackage{textcomp,gensymb} 
+\def\set#1{\mathcal{#1}}
+\def\sJ{\set{J}}
+\def\sH{\set{H}}
+\def\sI{\set{I}}
+\def\sN{\set{N}}
+\def\sR{\set{M}}
+\def\sM{\set{M}}
+\def\sP{\set{P}}
+\def\sR{\set{R}}
+\def\sS{\set{S}}
+\def\sD{\set{D}}
+\def\sE{\set{E}}
+
+\makeatletter
+\def\and{%
+  \end{tabular}%
+  \begin{tabular}[t]{c}}%
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or a\or b\or c\or
+   d\or e\or f\or g\or h\or i\else\@ctrerr\fi}}
+\makeatother
+
+\newcommand{\q}[1]{``#1''}
+\allowdisplaybreaks
+
+\makeatletter
+\newenvironment{rotatepage}
+        {%
+            \if@twoside%
+                \ifthispageodd{\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}{%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 270}}%
+            \else%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}%
+            \fi%
+        }%
+        {\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+
+\makeatother
+
+\def\bf{}
+\newenvironment{defsymbols}[1]
+{\vspace{-0.25ex}
+	\begin{list}{}{\settowidth{\labelwidth}{#1}
+			\setlength{\leftmargin}{\labelwidth}
+			\addtolength{\leftmargin}{\labelsep}
+			\parsep 0.5ex plus 0.2ex minus 0.2ex \itemsep 0.3ex % to customize
+			\renewcommand{\makelabel}[1]{ ##1 \hfill}}}{\end{list}}
+
+\def\st{& \text{subject to} &  \nonumber \\}
+\def\hs{\hspace*{-1cm}}
+\def\teps{\tilde{\epsilon}}
+\def\tmep{e^{-\tilde{\epsilon}}}
+
+\title{Modular capacitated sales force deployment problem}
+
+
+%\linespread{1.5}
+\pgfplotsset{compat=1.17}
+\begin{document}
+
+\maketitle
+
+\begin{section}{\textbf{Introduction}}
+
+
+
+
+The sales force deployment problem is a profit-maximizing planning problem. It deals with the simultaneous solution of four interrelated sub-problems: sizing of the salesforce, locating the sales representatives, sales territory design, and resource allocation. We use a concave sales response function assuming the marginal rate of generated sales decreases with increasing resource expenditure \citep{Drexl1999,Skiera1998}. In this case, the (scarce) resource is the selling time sales representatives assign to their customers. Our model formulation features an infinite number of binary variables, each related to a point of selling time in a continuous time interval. \cite{Haase2014} proposed a branch-and-price algorithm to obtain a very tight gap for the objective value of the optimal integer solution for the case that only one sales representative is allowed to serve a sales territory. We extend the existing approach by introducing different modes of locations, i.e. we allow sales territories to be handled by sales-teams instead of only one sales representative.
+
+\end{section}
+
+\begin{section}{\textbf{Problem description}}
+
+In this section we will briefly discuss the sub-problems in sales force deployment and introduce some necessary terminology. \\
+
+\textbf{Sales territory alignment.} Consider a selling company that operates within a large geographical area. This \emph{sales area} consists of so called \emph{sales coverage units} (SCUs). Each SCU is a smaller geographical region within the sales area and contains (potential) customers and/or sales representatives. Sales territory alignment aims to construct contiguous \emph{sales territories} that consist of at least one SCU. We ensure contiguity by introducing explicit contiguity constraints based on continuous flow variables in the fashion of \cite{Shirabe2009}. Note that any SCU can only be assigned to one (or none) sales territory.
+
+\textbf{Locating sales representatives.} The location sub-problem decides in which SCUs sales representatives will be located. Setting up a location causes \emph{fixed costs} (e.g. rent for the office rooms).
+
+\textbf{Sizing of the salesforce.} This sub-problem decides both on how many locations should be set up and on how many sales representatives should be employed at each location. The sizing decision also causes fixed costs (e.g. fixed part of salary, increasing rent for larger office rooms). By introducing capacities for the number of employees at each location we allow for more flexibility and larger profits than in \cite{Haase2014}.
+
+\textbf{Resource allocation} determines how sales representatives should allocate their time to the SCUs within their sales territory. The total \emph{selling time} is the sum of \emph{travel time} and \emph{calling time}. Calling time refers to the time spent at the customer (e.g. for product presentation). Travel time is assumed to be a constant fraction of selling time. It causes \emph{travel costs} and is approximated by a function of distance between SCUs and the potential locations they could be assigned to. \\
+
+All these sub-problems are solved simultaneously to maximize the total profit as a function of sales, travel costs, and fixed costs. Sales depend on calling time and are computed by a concave sales response function \citep{Skiera1998}. Due to the non-linearity of the objective function, we linearize it in the fashion of \cite{Haase2014}: Instead of treating selling time as a continuous decision variable we consider a continuous set of selling times and introduce an infinite number of binary variables each related to a point of selling time within that interval. 
+
+Based on \cite{Haase2014} we develop a branch-and-price algorithm to solve the modular capacitated sales force deployment problem. Therefore, we solve a linear relaxation of the MIP via column generation (CG). To initialize the CG-procedure we replace the continuous set of selling times with a countable set of explicit selling times and call this the restricted master problem (RMP). In each CG-iteration, new selling times are obtained analytically and passed to the RMP. New selling times are computed such that they maximize the reduced costs of the time-assignment variable. To obtain integer solutions we perform CG in each node of a branch-and-bound (B\&B) tree. During the B\&B-procedure we need to account for two types of binary variables. 1) Location variables, which decide in which SCUs a sales-team of a specific size should be located and 2) territory assignment variables that assign SCUs to these locations. First, we branch on the non-integer location variables. If no non-integer location variable exists we branch on the assignment variables. Note that the time-assignment variables are defined as non-negative but forced to be integer by the model.
+\end{section}
+
+\begin{section}{Results \& outlook}
+
+
+
+To test our procedure, we generate an artificial sales area where the SCUs are aligned on an oblique square. The SCUs are represented by regular hexagons such that each SCU is adjacent to at least two and at most six other SCUs. An exemplary solution is given in Figure \ref{fig:sales_area}. Each color represents a sales territory. The more transparent a node, the less time is allocated there. The set up locations are printed in bold letters and $m$ represents the number of employed sales representatives at each location. We compare our solutions to an approximation by discretized time variables.
+
+\begin{figure}[h!]
+    \centering
+    \includestandalone[width=0.85\linewidth]{hexagon_loop.tex}
+    \caption{Exemplary solution for an artificial sales area with 64 SCUs. }
+    \label{fig:sales_area}
+\end{figure}
+
+So far, we observe that profit contributions among sales representatives are often not evenly distributed. Employees working in sales usually receive a variable salary which depends on the generated sales. Using our simulated data sets we find that allowing for more than one salesperson to be responsible for a territory leads to a fairer distribution of expected profit contributions across sales representatives as well as overall higher objective function values (total profit).
+
+% To create a level playing field for everyone, we will include "fairness" constraints to our model. However, it remains to be seen how much of the total profit a company would have to sacrifice to achieve this.
+
+
+\end{section}
+
+\bibliography{References}
+
+\end{document}
+
+
+

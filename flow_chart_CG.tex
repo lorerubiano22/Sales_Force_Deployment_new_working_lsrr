@@ -1,0 +1,75 @@
+%\documentclass[x11names]{article}
+%\usepackage{tikz}
+%\usetikzlibrary{shapes,arrows,chains}
+%%%<
+%\usepackage{verbatim}
+%\usepackage[active,tightpage]{preview}
+%\PreviewEnvironment{tikzpicture}
+%\setlength\PreviewBorder{5mm}%
+
+%\begin{document}
+% =================================================
+% Set up a few colours
+%\colorlet{lcfree}{Green3}
+\colorlet{lcnorm}{OVGUblue4}
+%\colorlet{lccong}{Red3}
+% -------------------------------------------------
+% Set up a new layer for the debugging marks, and make sure it is on
+% top
+\pgfdeclarelayer{marx}
+\pgfsetlayers{main,marx}
+% A macro for marking coordinates (specific to the coordinate naming
+% scheme used here). Swap the following 2 definitions to deactivate
+% marks.
+\providecommand{\cmark}[2][]{%
+  \begin{pgfonlayer}{marx}
+    \node [nmark] at (c#2#1) {#2};
+  \end{pgfonlayer}{marx}
+  } 
+\providecommand{\cmark}[2][]{\relax} 
+% -------------------------------------------------
+% Start the picture
+\begin{tikzpicture}[%
+    >=triangle 60,              % Nice arrows; your taste may be different
+    start chain=going below,    % General flow is top-to-bottom
+    node distance=6mm and 60mm, % Global setup of box spacing
+    every join/.style={norm},   % Default linetype for connecting boxes
+    ]
+% ------------------------------------------------- 
+% A few box styles 
+% <on chain> *and* <on grid> reduce the need for manual relative
+% positioning of nodes
+\tikzset{
+  base/.style={draw, on chain, on grid, align=center, minimum height=8ex},
+  proc/.style={base, rectangle, text width=16em},
+  test/.style={base, diamond, aspect=2, text width=5em},
+  term/.style={proc, rounded corners},
+  % coord node style is used for placing corners of connecting lines
+  coord/.style={coordinate, on chain, on grid, node distance=6mm and 50mm},
+  % nmark node style is used for coordinate debugging marks
+  nmark/.style={draw, cyan, circle, font={\sffamily\bfseries}},
+  % -------------------------------------------------
+  % Connector line styles for different parts of the diagram
+  norm/.style={->, draw, lcnorm},
+  free/.style={->, draw, lcfree},
+  cong/.style={->, draw, lccong},
+  it/.style={font={\small\itshape}}
+}
+
+\node [term]      {\textbf{Start: }$\forall i \in I, j \in J_i$, initialize $T_{ij} = \mathcal{U}(0,0.01) \cdot T$};
+\node [term,join](t2) {Solve Restricted Master Problem};
+%\node [term,join] {$\forall i \in I, j \in J_i$, compute reduced costs $\overline{p}_{ij}(t)$ of $x_{ijt}$};
+\node [term,join] {\textbf{Subproblem:} $\forall i \in I, j \in J_i$, compute optimal selling time $t^*_{ij}$ that maximizes reduced cost $\overline{p}_{ij}(t)$ of variable $x_{ijt}$  };
+%\node [term,join](t5) {$\forall i \in I, j \in J_i$, };
+\node [test,join] (t6){$\forall i \in I, j \in J_i: \overline{p}_{ij}(t^*) \leq 0$};
+%\node [right=of t1] (t2) {};
+\node [term, right= 75mm of t6] (y1) {$\forall i \in I, j \in J_i$: if $\overline{p}_{ij}(t^*)>0$ then $T_{ij}:=T_{ij} \cup \{t^*\}$ };
+\node [coord, right= 75mm of t2] (c1)  {};
+\draw [->,lcnorm] (t6) to node[above,black]{no} (y1);
+\draw [-,lcnorm] (y1) -- (c1) ;
+\draw [->,lcnorm] (c1) -- (t2) ;
+\node [term, below=25mm of t6](t7) {\textbf{Stop: }optimal solution for the Master Problem (LP-Relaxation)};
+\draw [->,lcnorm,pos=0.35](t6) to node[left,black]{yes} (t7);
+\end{tikzpicture}
+
+%\end{document}

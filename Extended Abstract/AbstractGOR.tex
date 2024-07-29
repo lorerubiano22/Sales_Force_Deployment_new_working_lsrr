@@ -1,0 +1,112 @@
+%\documentclass[12pt, a4paper, twoside, titlepage]{article}
+\documentclass[12pt]{scrartcl}
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{natbib}
+\bibliographystyle{agsm} 
+\usepackage{amsmath,amssymb,amstext}
+\usepackage{amsfonts}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{courier}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{siunitx}
+\hypersetup{
+	colorlinks = true,
+	citecolor = blue
+}
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{color, colortbl}
+\usepackage{framed}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{threeparttable}
+\usepackage{rotating}
+\usepackage[mode=buildnew]{standalone}
+\usepackage[
+singlelinecheck=false % <-- important
+]{caption}
+\usepackage{adjustbox}
+\usepackage{textcomp,gensymb} 
+\def\set#1{\mathcal{#1}}
+\def\sJ{\set{J}}
+\def\sH{\set{H}}
+\def\sI{\set{I}}
+\def\sN{\set{N}}
+\def\sR{\set{M}}
+\def\sM{\set{M}}
+\def\sP{\set{P}}
+\def\sR{\set{R}}
+\def\sS{\set{S}}
+\def\sD{\set{D}}
+\def\sE{\set{E}}
+
+\makeatletter
+\def\and{%
+  \end{tabular}%
+  \begin{tabular}[t]{c}}%
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or a\or b\or c\or
+   d\or e\or f\or g\or h\or i\else\@ctrerr\fi}}
+\makeatother
+
+\newcommand{\q}[1]{``#1''}
+\allowdisplaybreaks
+
+\makeatletter
+\newenvironment{rotatepage}
+        {%
+            \if@twoside%
+                \ifthispageodd{\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}}{%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 270}}%
+            \else%
+                \pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}%
+            \fi%
+        }%
+        {\pagebreak[4]\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}}%
+
+\makeatother
+
+\def\bf{}
+\newenvironment{defsymbols}[1]
+{\vspace{-0.25ex}
+	\begin{list}{}{\settowidth{\labelwidth}{#1}
+			\setlength{\leftmargin}{\labelwidth}
+			\addtolength{\leftmargin}{\labelsep}
+			\parsep 0.5ex plus 0.2ex minus 0.2ex \itemsep 0.3ex % to customize
+			\renewcommand{\makelabel}[1]{ ##1 \hfill}}}{\end{list}}
+
+\def\st{& \text{subject to} &  \nonumber \\}
+\def\hs{\hspace*{-1cm}}
+\def\teps{\tilde{\epsilon}}
+\def\tmep{e^{-\tilde{\epsilon}}}
+
+\title{Modular capacitated sales force deployment problem}
+
+
+%\linespread{1.5}
+\pgfplotsset{compat=1.17}
+\begin{document}
+
+\maketitle
+
+\begin{section}{\textbf{Introduction}}
+
+
+
+This study explores the sales force deployment problem, focusing on profit-maximizing through four main areas: setting the optimal salesforce size, assigning salesperson locations, designing sales territories, and managing resource allocation. We employ a concave sales response function based on the premise that sales efficiency decreases as more resources are expended, specifically referencing the critical resource of salesperson time devoted to customers. Our model incorporates an infinite number of binary variables to represent a point of selling time in a continuous time interval. Extending upon \cite{Haase2014} branch-and-price algorithm by allowing sales territories to be handled by sales teams instead of only one sales representative.
+We analyze the fixed costs associated with various sales team sizes within specific sales coverage units, investigating how the sales function effectiveness changes with sales team size due to time elasticity. The objective is to maximize overall profit from all sales representatives across their territories. This approach enhances our understanding of sales coverage by examining the impact of sales force composition and the strategic distribution of sales territories. We present preliminary numerical results that light the relationship between sales team size and revenue fluctuations, guided by different parameters for time elasticity. 
+
+\bibliography{References}
+
+\end{document}

@@ -1,0 +1,9 @@
+\documentclass[tikz,border=10pt,multi]{standalone}
+\usetikzlibrary{shapes.geometric}
+\tikzset{my hexagon/.style={draw, minimum size= 4 cm, regular polygon, regular polygon sides=6},}\begin{document}
+\begin{tikzpicture}
+\node [my hexagon] at (  0,  0) {SCU001}; \\
+\node [my hexagon] at ( -3,  -1.732) {SCU002}; \\
+\node [my hexagon] at ( 3,  1.732) {SCU003}; \\
+\end{tikzpicture}
+\end{document}
